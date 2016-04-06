@@ -1,0 +1,57 @@
+SINGLETON
+
+т.к. в жс нет классов, то все создаваемые обьекты это разные обьекты. 
+Но при использовании функции конструктора, можно ее ограничить для создания только одного обьекта. 
+
+1. через статическое свойство:
+
+function Universe(){
+
+if(typeof Universe.instance === 'object'){
+          return Universe.instance;
+}
+
+this.start_time = 0;
+this.bang = 'big';
+
+Universe.instance = this;
+}
+
+2. через экземпляр в замыкании:
+переопределяем конструктор. Один раз он отрабатывает создавая обьект, а остальные разы просто возвращает инстанс.
+недостаток в том, что после этого нельзя добавить функционал к Universe.
+
+function Universe(){
+
+var instance = this;
+
+this.start_time = 0;
+this.bang = 'big';
+
+Universe = function(){
+  return instance;       
+};
+}
+
+3. самовызываемая функция:
+
+var Universe;
+
+(function(){
+
+var instance; //замыкание
+
+Universe = function Universe(){
+
+if(instance){
+return instance;
+}
+
+instance = this;
+
+this.start_time = 0;
+this.bang = 'big';
+
+
+}
+}());

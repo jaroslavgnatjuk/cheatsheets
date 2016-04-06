@@ -1,0 +1,121 @@
+более простые и вероятнее внедренные в браузеры:
+tel Telephone number
+email Email address text field
+url Web location URL
+search Term to supply to a search engine. For example, the search bar atop a browser.
+range Numeric selector within a range of values, typically visualized as a slider
+number A field containing a numeric value only
+
+более сложные и менее вероятно внедренные в браузеры: (firefox и IE не поддерживает ничего из этого кроме цвета)
+color Color selector, which could be represented by a wheel or swatch picker
+datetime Full date and time display, including a time zone, as shown in Figure 8-3
+datetime-local Date and time display, with no setting or indication for time zones
+time Time indicator and selector, with no time zone information
+date Selector for calendar date
+week Selector for a week within a given year
+month Selector for a month within a given year
+
+<input type="range" min="18" max="120" onchange="ageDisplay.value = value">
+<output id="ageDisplay">18</output>
+
+
+<progress></progress> - неопределенный прогрессбар
+<progress value="30" max="100"></progress> - 30% прошло
+
+
+attributes:
+
+placeholder
+<label>Runner: <input name="name" placeholder="First and last name"></label>
+
+autocomplete
+<input type="text" name="creditcard" autocomplete="off">
+on The field is not secure, and its value can be saved and restored.
+off The field is secure, and its value should not be saved.
+unspecified Default to the setting on the containing <form>. If not contained in a form, or no value is
+set on the form, then behave as if on.
+
+autofocus
+<input type="tel" autofocus>
+
+spellcheck
+<textarea id=”myTextArea” spellcheck=”true”>
+Also note that most browsers will default to leaving the spellcheck on, so unless the element (or one
+of its parent elements) turns off spellchecking, it will display by default.
+
+pattern
+<input type="number" name="creditcardnumber" pattern="[0-9]{16}" title="A
+credit card number is 16 digits with no spaces or dashes">
+
+list and datalist
+
+<datalist id="contactList">
+<option value="x@example.com" label="Racer X">
+<option value="peter@example.com" label="Peter">
+</datalist>
+
+<input type="email" id="contacts" list="contactList">
+
+min, max and step
+<input id="confidence" name="level" type="range" min="0" max="100" step="5" value="0">
+
+
+valueAsNumber Function
+convert the value of a control from text to number
+
+
+required
+
+
+valCheck = document.myform.myinput.validity - обьект в котором содержатся 8 состояний валидации
+ValidityState - агрегативное поле валидации
+customError - setCustomValidity(message) - пользовательское поле валидации и функция которая его устанавливает
+
+The checkValidity Function
+The checkValidity function allows you to check validation on the form without any explicit user input.
+Normally, a form’s validation is checked whenever the user or script code submits the form. This
+function allows validation to be done at any time.
+
+Adding Event Handlers for Invalid Events
+// event handler for "invalid" events
+function invalidHandler(evt) {
+var validity = evt.srcElement.validity;
+// check the validity to see if a particular constraint failed
+if (validity.valueMissing) {
+// present a UI to the user indicating that the field is missing a value
+}
+// perhaps check additional constraints here...
+}
+// If you do not want the browser to provide default validation feedback,
+// cancel the event as shown here
+evt.preventDefault();
+// register an event listener for "invalid" events
+myField.addEventListener("invalid", invalidHandler, false);
+
+formnovalidate
+<input type="submit" formnovalidate name="save" value="Save current progress">
+<input type="submit" name="process" value="Process order">
+
+CSS pseudo classes
+
+valid This pseudo-class selects any form element that passes all validity rules. In other words,
+this form element has state that is ready to be submitted.
+invalid This pseudo-class selects any form element that has errors or problems preventing it
+from being submitted. Selectors with this class are useful for showing users errors on the
+page.
+in-range This pseudo-class only selects elements such as inputs of type range where the current
+value is safely between the minimum and maximum values.
+out-of- This pseudo-class selects elements with inputs that have values outside of the acceptedCHAPTER 8  USING THE FORMS API
+range range.
+required Any elements that have been marked as required will be selected by this pseudo-class.
+optional Form elements that are not marked as required fall into this pseudo-class. Only form
+elements fit this category.
+
+example:
+input:invalid {
+    background-color: red;
+  }
+
+
+
+

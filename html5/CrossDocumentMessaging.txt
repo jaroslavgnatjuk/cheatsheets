@@ -1,0 +1,12 @@
+var button = document.getElementsByClassName('send-button')[0];
+
+    button.addEventListener('click', function (e) {
+        window.postMessage('my message', 'http://10.56.0.245:81');
+    });
+
+    function messageHandler(e) {
+        console.log(e);
+    }
+
+    window.addEventListener('message', messageHandler, true);
+

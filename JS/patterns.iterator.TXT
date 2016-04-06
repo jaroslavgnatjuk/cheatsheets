@@ -1,0 +1,31 @@
+ITERATOR
+
+
+
+function IteratorTest(arrParam){
+
+    var i = 0, arr = arrParam || [], len = arr.length;
+
+
+    return {
+
+        next: function(){
+            if(i + 2 <= len) {
+                i = i + 2;
+            }
+            return arr[i];
+        },
+
+        hasNext: function(){
+            if(i + 2 <= len) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    }
+
+}
+
+
