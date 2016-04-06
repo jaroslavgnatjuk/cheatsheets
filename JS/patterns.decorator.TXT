@@ -1,0 +1,37 @@
+DECORATOR
+
+добавляет функционал к методам класса. Вызывается оригинальный метод 
+и потом производятся какие-то манипуляции с результатом т.е. декорирование.
+
+Sale.decorators = {};
+
+Sale.decorators.fedtax = {
+getPrice: function (price){
+return price + price * 5 / 100;
+}
+};
+
+Sale.decorators.quebec = {
+getPrice: function (price){
+return price + price * 7.5 / 100;
+}
+};
+
+
+Sale.prototype.decorate = function(decorator){
+this.decorators_list.push(decorator);
+};
+
+Sale.prototype.getPrice = function(){
+var price = this.price,
+    i,
+    max = this.decorators_list.length,
+    name;
+    
+    for (i = 0; i < max; i += 1){
+    name = this.decorators_list[i];
+    price = Sale.decorators[name].getPrice(price);
+    }
+    
+    return price;
+}

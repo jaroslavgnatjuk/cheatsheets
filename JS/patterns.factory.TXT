@@ -1,0 +1,66 @@
+FACTORY
+пример:
+статический метод класса (функции конструктора) создает новые обьекты 
+наследники базового класса CarMaker на основании параметра метода фабрики.
+Пример фабрики в жс это Object. В зависимости от параметра он создает обьекты разных типов.
+
+var o = new Object(),
+    n = new Object(1),
+    s = Object('1'),
+    b = Object(true);
+    
+console.log(o.constructor);
+console.log(n.constructor);
+console.log(s.constructor);
+console.log(b.constructor);
+
+function CarMaker(){};
+
+CarMaker.prototype.getCountry = function(){
+    return this.country;
+}
+
+
+CarMaker.factory = function(brand){
+var newCar;
+
+    if(!CarMaker[brand]){
+        console.log('error, no such brand');
+        brand = 'default';
+    }
+
+    if(typeof CarMaker[brand].prototype.getCountry !== 'function'){
+        CarMaker[brand].prototype = new CarMaker();
+    }
+
+    newCar = new CarMaker[brand]();
+
+    return newCar;
+}
+
+CarMaker.skoda = function(){
+    this.country = 'Chech';
+}
+
+CarMaker.opel = function(){
+    this.country = 'Germany';
+}
+
+CarMaker.vaz = function(){
+    this.country = 'Russia';
+}
+
+CarMaker.renault = function(){
+    this.country = 'French';
+}
+
+CarMaker.default = function(){
+    this.country = 'default';
+}
+
+
+var testSkoda = CarMaker.factory('sk1oda');
+var testVaz = CarMaker.factory('vaz');
+
+console.log(testSkoda.getCountry());
+console.log(testVaz.getCountry());

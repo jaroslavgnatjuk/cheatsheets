@@ -1,0 +1,216 @@
+DOM
+--------------------------------------------------------------------------------
+document.documentElement - корневой элемент хтмл
+document.body - корневой элемент бади
+
+document.body.childNodes - массив узлов включая текстовые
+document.body.children - массив узлов только тэги
+
+body.firstChild === body.childNodes[0]
+body.lastChild === body.childNodes[body.childNodes.length-1]
+
+parentNode, previousSibling, nextSibling
+
+--------------------------------------------------------------------------------
+Таблицы
+TABLE
+
+        table.rows — список строк TR таблицы.
+        table.caption/tHead/tFoot — ссылки на элементы таблицы CAPTION, THEAD, TFOOT.
+        table.tBodies — список элементов таблицы TBODY, по спецификации их может быть несколько.
+
+THEAD/TFOOT/TBODY
+
+        tbody.rows — список строк TR секции.
+
+TR
+
+        tr.cells — список ячеек TD/TH
+        tr.sectionRowIndex — номер строки в текущей секции THEAD/TBODY
+        tr.rowIndex — номер строки в таблице
+
+TD/TH
+
+        td.cellIndex — номер ячейки в строке
+
+
+--------------------------------------------------------------------------------
+Формы
+
+Элементы FORM можно получить по имени или номеру, используя свойство document.forms[name/index].
+
+Например:
+document.forms.my -- форма с именем 'my'
+document.forms[0] -- первая форма в документе
+
+document.forms.my.elements.myinput - <form name="my"><input name="myinput">
+document.forms.my == document.forms.my.elements.form
+
+--------------------------------------------------------------------------------
+Только элементы
+
+В современных браузерах, включая IE9+, реализованы дополнительные свойства, работающие только для элементов: 
+
+    childElementCount — число детей-элементов (=children.length)
+    firstElementChild — первый потомок-элемент (=children[0])
+    lastElementChild — последний потомок-элемент (=children[children.length-1])
+    nextElementSibling — правый брат-элемент
+    previousElementSibling — левый брат-элемент
+
+--------------------------------------------------------------------------------
+
+Тип: nodeType
+interface Node {
+  // NodeType
+  const unsigned short      ELEMENT_NODE       = 1;
+  const unsigned short      ATTRIBUTE_NODE     = 2;
+  const unsigned short      TEXT_NODE          = 3;
+  const unsigned short      CDATA_SECTION_NODE = 4;
+  const unsigned short      ENTITY_REFERENCE_NODE = 5;
+  const unsigned short      ENTITY_NODE        = 6;
+  const unsigned short      PROCESSING_INSTRUCTION_NODE = 7;
+  const unsigned short      COMMENT_NODE       = 8;
+  const unsigned short      DOCUMENT_NODE      = 9;
+  const unsigned short      DOCUMENT_TYPE_NODE = 10;
+  const unsigned short      DOCUMENT_FRAGMENT_NODE = 11;
+  const unsigned short      NOTATION_NODE      = 12;  
+  ...
+}
+Самые важные — это ELEMENT_NODE под номером 1 и TEXT_NODE под номером 3.
+--------------------------------------------------------------------------------
+
+innerHTML: содержимое элемента
+доступно для записи нового содержимого элемента
+Добавление innerHTML+= осуществляет перезапись
+
+--------------------------------------------------------------------------------
+Атрибуты
+
+Узлы DOM, с другой стороны, являются HTML-элементами, у которых есть атрибуты.
+Доступ к атрибутам осуществляется при помощи стандартных методов:
+
+    elem.hasAttribute(name) - проверяет наличие атрибута
+    elem.getAttribute(name) - получает значение атрибута
+    elem.setAttribute(name, value) - устанавливает атрибут
+    elem.removeAttribute(name) - удаляет атрибут
+
+Все атрибуты элемента можно получить с помощью свойства attributes, которое содержит псевдо-массив объектов типа Attr {name, value}
+
+Для того, чтобы избежать проблем с IE, используйте атрибуты правильно.
+Другими словами, всегда старайтесь использовать свойства, а атрибуты - только там, где это действительно нужно.
+--------------------------------------------------------------------------------
+
+getElementById
+getElementsByTagName
+Можно получить все элементы, передав звездочку '*' вместо тега:
+
+var allElems = document.getElementsByTagName('*');
+
+Если хочется получить только один элемент — можно указать индекс сразу же:
+var element = document.getElementsByTagName('input')[0]
+
+getElementsByName - ищет по атрибуту name
+getElementsByClassName - ищет по классу
+
+querySelectorAll
+Вызов elem.querySelectorAll(cssQuery) возвращает все элементы внутри elem, удовлетворяющие CSS-селектору cssQuery.
+var elements = document.querySelectorAll('ul > li:last-child');
+
+querySelector
+То же самое, что elem.querySelectorAll(cssQuery), но возвращает только первый элемент.
+
+matchesSelector
+Вызов elem.matchesSelector(css) проверяет, удовлетворяет ли elem селектору css.
+Он возвращает true либо false. 
+
+--------------------------------------------------------------------------------
+
+Создание элементов: createElement
+
+document.createElement(tag)
+document.createTextNode(text)
+
+Клонирование
+
+Новый элемент можно также склонировать из существующего:
+
+newElem = elem.cloneNode(true)
+    Клонирует элемент elem, вместе с атрибутами, включая вложенные в него.
+newElem = elem.cloneNode(false)
+    Клонирует элемент elem, вместе с атрибутами, но без подэлементов.
+
+Методы для создания узлов:
+    document.createElement(tag) — создает элемент
+    document.createTextNode(value) — создает текстовый узел
+    elem.cloneNode(deep) — клонирует элемент, если deep == true, то со всеми потомками.
+
+Вставка и удаление узлов:
+    parent.appendChild(elem)
+    parent.insertBefore(elem, nextSibling)
+    parent.removeChild(elem)
+    parent.replaceChild(elem, currentElem)
+
+Все эти методы возвращают elem.
+
+--------------------------------------------------------------------------------
+
+Метод insertAdjacentHTML позволяет вставлять произвольный HTML в любое место документа, в том числе и между узлами!
+insertAdjacentElement и insertAdjacentText
+DocumentFragment
+var fragment = document.createDocumentFragment();
+
+--------------------------------------------------------------------------------
+
+classList
+
+Свойство classList предоставляет удобный интерфейс для работы с отдельными классами.
+
+Оно поддерживается во всех современных браузерах, в IE начиная с IE10, но его можно эмулировать в IE8+.
+
+    elem.classList.contains(cls) — возвращает true/false, в зависимости от того, есть ли у элемента класс cls.
+    elem.classList.add/remove(cls) — добавляет/удаляет класс cls
+    elem.classList.toggle(cls) — если класса cls нет, добавляет его, если есть — удаляет.
+
+style
+
+Свойство style дает доступ к стилю элемента. Это свойство можно как читать, так и править.
+
+Свойство style.cssText позволяет поставить стиль целиком в виде строки
+Для того, чтобы получить текущее используемое значение (used value) свойства, используется метод window.getComputedStyle - возвращает обьект style
+
+
+Метрики JavaScript, в отличие от свойств CSS, содержат числа, всегда в пикселях и без единиц измерения на конце.
+clientWidth/Height
+scrollWidth/Height  включая прокрученную область
+
+scrollTop/scrollLeft Размеры текущей прокрученной части элемента — вертикальной и горизонтальной. 
+ 
+offsetWidth/Height
+Внешняя ширина/высота блока, полный размер, включая рамки, исключая внешние отступы margin.
+
+
+Свойства clientWidth/Height для элемента document.documentElement позволяют получить ширину/высоту видимой области окна.
+Если прокрутка на странице присутствует, то полные размеры страницы можно взять в document.documentElement.scrollWidth/scrollHeight. 
+
+var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+alert("Текущая прокрутка: " + scrollTop);
+
+Метод scrollBy(x,y) прокручивает страницу относительно текущих координат.
+Метод scrollTo(pageX,pageY) прокручивает страницу к указанным координатам относительно документа. Он эквивалентен установке свойств scrollLeft/scrollTop.
+
+Метод elem.scrollIntoView(top) вызывается на элементе и прокручивает страницу так, чтобы элемент оказался вверху, если параметр top равен true, и внизу, если top равен false. Причем, если параметр top не указан, то он считается равным true.
+
+Чтобы запретить прокрутку страницы, достаточно поставить document.body.style.overflow = "hidden".
+
+Координаты в окне браузера: elem.getBoundingClientRect()
+возвращает размеры прямоугольника, который охватывает элемент, в виде объекта со свойствами: top, left, right, bottom.
+
+Получение элемента по координатам (относительно окна, а не документа) document.elementFromPoint(clientX, clientY).
+Координаты браузера на экране alert("Браузер находится на " + window.screenX + "," + window.screenY);
+
+Проверка вложенности var result = nodeA.contains(nodeB);
+сравнение позиций элементов относительно друг друга var result = nodeA.compareDocumentPosition(nodeB);
+
+--------------------------------------------------------------------------------
+
+
