@@ -1,1 +1,70 @@
-select * from table1 - выбирает все столбцы и записи из таблицы table1 :))
+--пример создания вьюхи и вывод всех участвующих во вьюхе таблиц
+
+create view tmp.testview
+as
+select t1.clientid, t3.AmmountDeposit, t4.RDK
+from RM.tCards as t1
+join RM.tStopFactorClient as t2 on t2.ClientID = t1.ClientID
+                         and t2.BLColor = 'R'
+join RM.tDeposit as t3 on t3.ClientID = t1.ClientID
+                      and t3.AmmountDeposit > 10000
+join RM.tRelClients as t4 on t4.ClientID = t1.ClientID;
+
+
+select soRef.name, soRef.type, soRef.id,suRef.user_name, soDep.name, soDep.type, 
+suDep.user_name, soDep.id
+from SYSDEPENDENCY sd 
+join sysobjects soREf on  soRef.id=sd.ref_object_id
+join sysobjects soDep on  soDep.id=sd.dep_object_id
+join sysuser suRef on suRef.user_id=soREF.uid
+join sysuser suDep on suDep.user_id=soDep.uid
+where soDep.name='testview';
+
+
+--список прав для скл-разработчика
+
+GRANT 
+EXECUTE ANY PROCEDURE,
+ALTER ANY PROCEDURE,
+CREATE ANY PROCEDURE,
+DROP ANY PROCEDURE,
+
+REORGANIZE ANY OBJECT,
+COMMENT ANY OBJECT,
+CREATE ANY OBJECT,
+
+LOAD ANY TABLE,
+CREATE ANY TABLE,
+ALTER ANY TABLE,
+INSERT ANY TABLE,
+SELECT ANY TABLE,
+UPDATE ANY TABLE,
+DROP ANY TABLE,
+DELETE ANY TABLE,
+TRUNCATE ANY TABLE,
+
+CREATE ANY INDEX,
+ALTER ANY INDEX,
+
+ALTER ANY VIEW,
+CREATE ANY VIEW,
+
+READ CLIENT FILE,
+LOAD ANY TABLE,
+DROP CONNECTION,
+MANAGE ANY OBJECT PRIVILEGE
+
+ TO it170692gda
+WITH NO ADMIN OPTION;
+
+grant OPERATOR to it170692gda;
+GRANT MONITOR TO it170692gda;
+
+CREATE USER "ddrr" IDENTIFIED BY '***';
+GRANT MEMBERSHIP IN GROUP "system_role" TO "ddrr";
+
+REVOKE OPERATOR FROM it170692gda;
+
+
+REVOKE OPERATOR FROM dn180689bva;
+GRANT MONITOR TO dn180689bva;

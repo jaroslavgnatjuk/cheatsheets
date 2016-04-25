@@ -28,6 +28,10 @@ date +%Y%m%d_%H%M%S - 20160404_161456
 alias geditx="gksudo env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY gedit"
 
 
+копировать файлы по маске
+for file in ~/Videos/**/*.JPG; do cp "$file" ~/Videos/; done
+
+
 
 впн с винды на убунту
 для того что-бы использовать rdp
@@ -117,6 +121,8 @@ usermod -G shared yarik добавляет к группе shared юзера yar
 today=`date +%y%m%d`
 today2=$(date +%Y-%m-%d)
 
+ssh sybase@rims.vm.pbank.com.ua - enter server by ssh
+scp -r sybase@rims.vm.pbank.com.ua:/DATA/scripts ~/scripts - copy folder by ssh
 
 wc < file1 перенаправление ввода из файла
 wc << marker
