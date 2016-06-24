@@ -24,6 +24,8 @@ NoDisplay=false
 date +%Y%m%d_%H%M%S - 20160404_161456
 
 
+sudo fuser -k 80/tcp - кто держит порт (-k убьет эти процессы)
+
 запускать гедит под рутом из терминала
 alias geditx="gksudo env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY gedit"
 
@@ -31,7 +33,8 @@ alias geditx="gksudo env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY gedit"
 копировать файлы по маске
 for file in ~/Videos/**/*.JPG; do cp "$file" ~/Videos/; done
 
-
+json=$(python2.7 data_types.py tcards.txt '|' 0); echo ${json//\'/\"} - выгружаем результат выполнения команды в переменную, заменяем одинарные кавычки на двойные
+echo ${original_string//find/replace} - контекстная замена
 
 впн с винды на убунту
 для того что-бы использовать rdp
@@ -46,6 +49,8 @@ http://thelittleican.blogspot.in/2013/09/unable-to-add-ppa-behind-proxy.html
 
 ls | grep -v .git | xargs rm -r - удалить все файлы кроме .git
 
+
+top -p $(pgrep -d',' python) - выводит инфу по пидам команды python
 
 варианты как кильнуть все процессы dbisql:
 1)
@@ -96,7 +101,7 @@ ls -lhS l-long, h - hunamreadable S sort-size X sorx extension
 tail -f -s 10 file.txt показывать конец файла с обновлением в 10сек
 ps -f -U yarik --forest показывает широкую информацию о процессах юзера yarik и показывает иерархию процессов
 top shift > < для смены поля сортировки, x для выделения поля сортировки
-du -hd 1 или du --max-depth=1 -h показать занимаемое пространство всех подпапок в папке без под директорий
+du -hd 1 или du --max-depth=1 -h | sort -hr показать занимаемое пространство всех подпапок в папке без под директорий и отсортирует по убыванию
 du -d 1 | sort -n сортирует по числам размер подпапок
 PATH=$PATH:/home/user/test добавили новый путь к переменной
 PATH=$PATH:. добавили текущий каталог к переменной
@@ -748,7 +753,7 @@ echo "The cat is asleep" | gawk '/cat|dog/{print $0}'
 echo "Sat" | gawk '/Sat(urday)?/{print $0}'
 echo "cat" | gawk '/(c|b)a(b|t)/{print $0}'
 
-
+/(?=.*a)(?=.*b)(?=.*c)/ - проверит наличие a b и c в строке, в любом месте (И - AND)
 
 
 

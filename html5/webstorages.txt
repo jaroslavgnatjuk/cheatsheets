@@ -1,0 +1,29 @@
+sessionStorage.setItem('name', 'value'); устанавливает значение в хранилище сессии
+sessionStorage.getItem('name'); извлекает значение
+sessionStorage['name'] = 'value';
+sessionStorage.name;
+
+переменные сесси хранятся в пределах окна или вкладки, не боятся перезагрузки (refresh)
+
+localStorage - аналогично, только хранятся и после рестарта браузера
+
+removeItem удалит элемент по ключу
+clear удалит все элементы
+length свойство - возвращает к-во элементов
+key - доступ по индексу
+
+пример:
+for (var i=0; i<localStorage.length; i++) {
+    console.log(localStorage.key(i))
+}
+
+window.addEventListener("storage", displayStorageEvent, true); сигнализирует изменения в хранилище
+
+// display the contents of a storage event
+function displayStorageEvent(e) {
+var logged = "key:" + e.key + ", newValue:" + e.newValue + ", oldValue:" +
+e.oldValue +", url:" + e.url + ", storageArea:" + e.storageArea;
+}
+alert(logged);
+// add a storage event listener for this origin
+window.addEventListener("storage", displayStorageEvent, true);

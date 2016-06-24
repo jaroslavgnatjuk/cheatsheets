@@ -1,0 +1,237 @@
+sudo npm install -g supervisor - для автоматического перезапуска сервера при изменении в скриптах
+sudo npm install -g node-inspector - для отладки программ на ноде в браузере хром
+node --debug server.js, запускаем node-inspector
+
+для логирования:
+модули: debug, winston
+
+timer.unref() - будет значить что таймер не важен и если не осталось других событий, можно закрывать приложение
+
+process.nextTick(f) - асинхронно запустит выполнение функции
+setImmediate(f) - запустит функцию на следующей итерации цикла событий
+
+в пределах модуля переменные локальны. Глобальную можно сделать так: global.variable = 2;
+
+console.time() начинает отслеживать время, console.timeEnd() - завершает
+
+module: child_process
+Use spawn when you want the child process to return huge binary data to Node, use exec when you want the child process to return simple status messages.
+fork - for run node.js processes (other js files)
+send - посылает сообщения между процессами
+exec возвращает буфер (для кодирования в текст использовать toString())
+fork и spawn возвращают обьект процесса с свойствами stdin/out у которых есть события data, close, error ...
+
+
+события:
+addListener(event, listener) = on 
+once выполнит обработку события только 1 раз
+
+обьект.setMaxListeners(n) максимальное к-во обработчиков, по умолчанию 10
+обьект.listeners - вернет к-во обработчиков
+
+removeListener( event, listener) уберет обработчик (функция должна быть предварительно именована)
+
+emit(event, [args]) - заставит сработать обработчики события
+
+
+EventEmitter - это основной объект, реализующий работу обработ­ чиков событий в Node.js. Все кто работают с событиями наследуют от него.
+
+если юзерский обьект должен работать с событиями можно это сделать так:
+
+var EventEmitter = require('events').EventEmitter;
+
+var MyClass = function () {
+    this.f1 = '';
+    this.f2 = '';
+}
+MyClass.prototype = new EventEmitter();
+
+var myObj = new MyClass();
+myObj.on('myEvent', function (data) {
+    console.log(data);
+});
+myObj.emit('myEvent', 'param for myevent');
+
+Модули:
+в качестве модуля можно подключить целую папку, в ней должен быть index.js.
+
+пример чтения из потока:
+var rs = fs.createReadStream('/home/yarik/Music/song.mp3')
+
+rs.on('open', function(){
+    console.log('open');
+});
+
+rs.on('readable', function(){
+    console.log('read');
+});
+
+rs.on('end', function(){
+    console.log('end');
+});
+
+rs.on('data', function(chunk){
+    console.log('data', chunk.length);
+});
+
+pipe:
+var rs = fs.createReadStream('/home/yarik/Music/song.mp3')
+var ws = fs.createWriteStream('/home/yarik/Music/song2.mp3')
+
+rs.pipe(ws); - скопировали файл
+
+// Compress the file input.txt to input.txt.gz
+fs.createReadStream('input.txt')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('input.txt.gz'));
+
+
+
+пример чата по tcp
+---------------------------------------------------------
+var net = require('net'),
+    events = require('events');
+
+var channel = new events.EventEmitter();
+
+channel.clients = {};
+
+channel.addClient = function(client) {
+    var newId = 0;
+
+    for(var key in this.clients) {
+        if (key > newId) {
+            newId = key;
+        }
+    }
+    this.clients[newId+1] = client;
+
+    client.on('data', function (chunk) {
+        channel.emit('broadcast', newId+1, chunk);
+    });
+
+    this.on('broadcast', (function () {
+        return function (senderId, message) {
+            if (senderId !== newId + 1) {
+                this.clients[newId + 1].write(message);
+            }
+        }
+    })());
+}
+
+net.createServer(function(client){
+    channel.addClient(client);
+}).listen(8000);
+---------------------------------------------------------------
+
+пример с промисами:
+require('es6-shim');
+
+function getData(n) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            resolve(n + 'sec passed');
+        }, n);
+    });
+}
+
+getData(1000)
+    .then(function (resp) {
+        console.log(resp, '!!');
+        return getData(2000);
+    })
+    .then(function (resp) {
+        console.log(resp, '!!');
+        return getData(3000);
+    }).then(function (resp) {
+    console.log(resp, 'end');
+});
+-----------------------------------------------------------------
+пример последовательного вызова асинхронных функций через nimble:
+var _ = require('nimble');
+
+function f(callback){
+    setTimeout(function(){
+        console.log(1000);
+        callback();
+    }, 1000);
+}
+
+_.series([f, f, f],
+function(){
+    console.log('finish');
+});
+-------------------------------------------------------------------
+пример простого сервера статических файлов:
+var http = require('http');
+var parse = require('url').parse;
+var join = require('path').join;
+var fs = require('fs');
+var root = __dirname;
+
+var server = http.createServer(function(req, res){
+    var url = parse(req.url);
+    var path = join(root, url.pathname);
+    var stream = fs.createReadStream(path);
+    stream.pipe(res);
+    stream.on('error', function(err){
+        res.statusCode = 500;
+        res.end('Internal Server Error');
+    });
+});
+
+server.listen(3000);
+--------------------------------------------------------------
+пример использования connect:
+var connect = require('connect');
+
+function logger(req, res, next) {
+    console.log('%s %s', req.method, req.url);
+    next();
+}
+
+function hello(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('hello world');
+}
+connect()
+    .use(logger)
+    .use(hello)
+    .listen(3000);
+-----------------------------------------------------------------
+пример парсинга json или данных формы из запроса:
+var connect = require('connect');
+var bodyParser = require('body-parser');
+
+connect()
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({extended:true}))
+    .use(function(req, res){
+        res.end(JSON.stringify(req.body, null, 2));
+    })
+    .listen(3001);
+---------------------------------------------------------------------
+пример логгера:
+var logger = require('connect-logger');
+
+connect()
+    .use(logger({format:'%date %status %method %url'}))
+---------------------------------------------------------------------
+
+    
+EXPRESS:
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+response.redirect("/hello/world");
+response.redirect("http://expressjs.com");
+response.sendFile("/path/to/cool_song.mp3");
+
+regexp in route:
+app.get(/^\/users\/(\d+)$/, function(req, res) {
+var userId = parseInt(req.params[0], 10);
+// ...
+Accesses parameters
+});
+
+
+
