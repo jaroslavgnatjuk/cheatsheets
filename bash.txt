@@ -52,6 +52,26 @@ ls | grep -v .git | xargs rm -r - удалить все файлы кроме .g
 
 top -p $(pgrep -d',' python) - выводит инфу по пидам команды python
 
+
+- пройдется построчно по файлу, выведет в каждую строку к-во встречаний запятой, отсортирует и выберет уникальные
+for line in $(cat ./Data_for_PB_appl_model.csv)
+do
+
+echo $(grep -o "," <<< "$line" | wc -l) >> file
+
+done
+
+sort file | uniq
+rm file
+
+
+
+- показывать напоминалку каждые N минут с определнным сообщением + проверка висит ли уже такое сообщение
+
+10,40 * * * * if [ $(ps -ef | grep Напоминалка | wc -l) -eq 1 ]; then export DISPLAY=:0 && zenity --info --title="Напоминалка" --text="Пора размяться!" --display=:0.0; fi
+
+
+
 варианты как кильнуть все процессы dbisql:
 1)
 for pid in $(ps -o pid h -C java)
