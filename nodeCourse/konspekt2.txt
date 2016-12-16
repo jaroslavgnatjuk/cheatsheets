@@ -1,0 +1,39 @@
+fs.createReadStream(__filename)
+.on('readable', function() {
+  let data = this.read();
+});
+--поток в состоянии паузы, считать порцию данных можем через read.
+
+.on('data', function(chunk) {
+  body += chunk;
+})
+--поток в состоянии flowing т.е. автоматически генерит событие data
+можно поставить поток на паузу и возобновить выолнив pause или resume
+
+.on('end', function () {
+  res.end(body);
+});
+-- когда данные все переданы
+а событие finish для потоков на запись
+  
+pipe работает через data событие т.е. через flowing 
+
+буфер можно накапливать в массив и потом склеить методом Buffer.concat(chunks)
+
+destroy - уничтожает поток и закрывает файл (если потока файловый)
+
+http.STATUS_CODES - массив кодов ответов шттп протокола с описанием
+
+npm install config - удобный модуль для конфигов
+например ./config/default.json конфиг поумолчанию                                   
+можно использовать переменную среды NODE_ENV=development или production
+использование
+config = require('config')
+conig.get('param')
+также будет считывать конфиг с именем указанным в переменной окружения NODE_ENV, 
+например test, deployment
+можно создать файл конфигов custom-enviroment-variables.json в котором переменные будут замаплены на переменные среды
+
+mime - модуль с помощью которого можно определить content-type файла
+mime.lookup(filename)
+
